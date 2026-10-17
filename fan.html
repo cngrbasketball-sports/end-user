@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Congre Basketball Olympics Season 2 - Fan Box Score</title>
+    <style>
+        :root {
+            --primary-bg: #0b1120;
+            --card-bg: #1e293b;
+            --accent-gold: #f59e0b;
+            --accent-blue: #3b82f6;
+            --border-color: #334155;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-light);
+            padding: 12px;
+            font-size: 15px;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: 2px solid var(--accent-gold);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .header-logo {
+            width: 65px;
+            height: 65px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid var(--accent-gold);
+            background-color: #000;
+        }
+
+        .header-title-container {
+            text-align: center;
+            flex-grow: 1;
+            padding: 0 10px;
+        }
+
+        .header-title-container h1 {
+            color: var(--accent-gold);
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .header-title-container p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 2px;
+        }
+
+        /* NAVIGATION TABS */
+        .nav-tabs {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 8px;
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 15px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+        .nav-tabs::-webkit-scrollbar-thumb {
+            background: var(--accent-gold);
+            border-radius: 4px;
+        }
+
+        .nav-btn {
+            background: #1e293b;
+            color: var(--text-light);
+            border: 1px solid var(--border-color);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover, .nav-btn:active {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        .nav-btn.active {
+            background: var(--accent-gold);
+            color: #000;
+            border-color: var(--accent-gold);
+        }
+
+        .nav-btn.matchup-btn {
+            background: var(--accent-blue);
+            color: #fff;
+            border-color: var(--accent-blue);
+        }
+
+        .nav-btn.matchup-btn.active {
+            background: #2563eb;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.7);
+        }
+
+        .tab-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* VIEWS */
+        .view-panel {
+            display: none;
+        }
+
+        .view-panel.active {
+            display: block;
+        }
+
+        /* MATCHUP CONTROLS */
+        .matchup-selector-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0f172a;
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .team-select-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 240px;
+        }
+
+        .team-select-box select {
+            width: 100%;
+            background: #1e293b;
+            color: #fff;
+            padding: 8px 12px;
+            border: 2px solid var(--accent-gold);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .versus-badge {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--accent-gold);
+            padding: 4px 14px;
+            background: #1e293b;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin: 0 auto;
+        }
+
+        /* VERTICAL MATCHUP GRID */
+        .matchup-grid-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* CARDS & TABLES */
+        .team-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .team-header-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0f172a;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 5px solid var(--accent-gold);
+        }
+
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .team-header-logo {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-gold);
+        }
+
+        .team-header-banner h2 {
+            font-size: 1.25rem;
+            color: var(--accent-gold);
+            letter-spacing: 0.5px;
+        }
+
+        .team-score-badge {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #4ade80;
+            background: #1e293b;
+            padding: 4px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table.stat-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        table.stat-table th, table.stat-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+        }
+
+        table.stat-table th {
+            background-color: #0f172a;
+            color: var(--accent-gold);
+            font-weight: bold;
+            font-size: 0.88rem;
+            white-space: nowrap;
+        }
+
+        table.stat-table tr:nth-child(even) {
+            background-color: #172033;
+        }
+
+        .player-col {
+            text-align: left !important;
+            padding-left: 10px !important;
+            white-space: nowrap;
+            min-width: 160px;
+            font-weight: 700;
+            font-size: 0.98rem;
+            position: sticky;
+            left: 0;
+            background: #1e293b;
+            z-index: 1;
+        }
+
+        table.stat-table tr:nth-child(even) .player-col {
+            background: #172033;
+        }
+
+        .pts-cell {
+            color: #4ade80 !important;
+            font-size: 1.15rem;
+            font-weight: 900;
+        }
+
+        .pct-cell {
+            color: #38bdf8;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+
+        /* ACTIONS BAR */
+        .actions-bar {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .action-btn {
+            background: var(--card-bg);
+            color: #fff;
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .action-btn:active {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        @media print {
+            body { background: #fff; color: #000; }
+            .nav-tabs, .matchup-selector-bar, .actions-bar { display: none !important; }
+            .team-card { background: #fff; border: 1px solid #000; }
+            table.stat-table th { background: #eee !important; color: #000 !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="app-header">
+        <img src="840069523_1617887930033821_6965812852497925699_n.jpg" class="header-logo" onerror="this.src='https://via.placeholder.com/65/0f172a/f59e0b?text=CBL'">
+        <div class="header-title-container">
+            <h1>Congre Basketball Olympics</h1>
+            <p>Season 2 — Official Fan & Spectator Box Score</p>
+        </div>
+        <img src="839859719_930183739880776_4844381458750892179_n.jpg" class="header-logo" onerror="this.src='https://via.placeholder.com/65/0f172a/f59e0b?text=S2'">
+    </header>
+
+    <!-- NAVIGATION TABS -->
+    <nav class="nav-tabs">
+        <button class="nav-btn matchup-btn active" onclick="switchTab('matchup-view')">⚡ LIVE MATCH-UP BOX SCORE</button>
+        <button class="nav-btn" onclick="switchTab('percentages-view')">📊 OVERALL PERCENTAGES & BOX SCORE</button>
+        <button class="nav-btn" onclick="switchTab('team-URBAN')"><img src="Urban.jpg" class="tab-icon" onerror="this.src='https://via.placeholder.com/22'"> Urban Hoopers</button>
+        <button class="nav-btn" onclick="switchTab('team-BALDOG')"><img src="baldog.jpg" class="tab-icon" onerror="this.src='https://via.placeholder.com/22'"> Baldogiii</button>
+        <button class="nav-btn" onclick="switchTab('team-WAR')"><img src="total war.jpg" class="tab-icon" onerror="this.src='https://via.placeholder.com/22'"> Total War</button>
+        <button class="nav-btn" onclick="switchTab('team-ARCOM')"><img src="arcom.jpg" class="tab-icon" onerror="this.src='https://via.placeholder.com/22'"> Arcom Steele</button>
+        <button class="nav-btn" onclick="switchTab('team-TRUE')"><img src="true.jpg" class="tab-icon" onerror="this.src='https://via.placeholder.com/22'"> True Baller</button>
+        <button class="nav-btn" onclick="switchTab('team-HOB')"><img src="HOB.jpg" class="tab-icon" onerror="this.src='https://via.placeholder.com/22'"> House of Ballers</button>
+        <button class="nav-btn" onclick="switchTab('team-DRAGONS')"><img src="dragons.jpg" class="tab-icon" onerror="this.src='https://via.placeholder.com/22'"> Dragons</button>
+        <button class="nav-btn" onclick="switchTab('team-OTITS')"><img src="otits.jpg" class="tab-icon" onerror="this.src='https://via.placeholder.com/22'"> Otits</button>
+    </nav>
+
+    <div class="actions-bar">
+        <button class="action-btn" onclick="window.print()">🖨️ Print / Save PDF</button>
+        <button class="action-btn" onclick="exportCSV()">📥 Download CSV</button>
+    </div>
+
+    <!-- LIVE MATCHUP VIEW -->
+    <div id="matchup-view" class="view-panel active">
+        <div class="matchup-selector-bar">
+            <div class="team-select-box">
+                <label style="color:var(--accent-gold); font-weight:bold;">HOME TEAM (TOP):</label>
+                <select id="homeTeamSelect" onchange="renderMatchup()"></select>
+            </div>
+            <div class="versus-badge">VS</div>
+            <div class="team-select-box">
+                <label style="color:var(--accent-gold); font-weight:bold;">AWAY TEAM (BOTTOM):</label>
+                <select id="awayTeamSelect" onchange="renderMatchup()"></select>
+            </div>
+        </div>
+
+        <div class="matchup-grid-vertical">
+            <div id="homeMatchupContainer" class="team-card"></div>
+            <div id="awayMatchupContainer" class="team-card"></div>
+        </div>
+    </div>
+
+    <!-- OVERALL PERCENTAGES & BOX SCORE VIEW -->
+    <div id="percentages-view" class="view-panel">
+        <div class="matchup-grid-vertical">
+            <div id="homePercentagesContainer" class="team-card"></div>
+            <div id="awayPercentagesContainer" class="team-card"></div>
+        </div>
+    </div>
+
+    <!-- SINGLE TEAM VIEWS -->
+    <div id="single-team-views"></div>
+
+    <script>
+        const teamsData = {
+            "URBAN": {
+                name: "URBAN HOOPERS", logo: "Urban.jpg",
+                roster: [
+                    {jersey: 16, name: "DELA CRUZ, VINCE"},
+                    {jersey: 9, name: "CANCILLER, NATANIEL"},
+                    {jersey: 17, name: "LAYA, GEMEROL"},
+                    {jersey: 18, name: "CANONIZADO, AZER"},
+                    {jersey: 33, name: "TABAG, JASON"},
+                    {jersey: 26, name: "HERNANDEZ, REN"},
+                    {jersey: 8, name: "QUIDILLA, JOHN"},
+                    {jersey: 1, name: "HUBILLA, JONEE"},
+                    {jersey: 7, name: "RAMOS, MARK"},
+                    {jersey: 5, name: "MARTIN, KENJIE"},
+                    {jersey: 6, name: "GLORIANI, PRINCE"},
+                    {jersey: 77, name: "JAVIER, IAN"},
+                    {jersey: 3, name: "GOROSPE, RIDGE (RSV)"}
+                ]
+            },
+            "BALDOG": {
+                name: "BALDOGIII", logo: "baldog.jpg",
+                roster: [
+                    {jersey: 21, name: "ASINAS, JONATHAN"},
+                    {jersey: 6, name: "SONG, PHILKO"},
+                    {jersey: 8, name: "SISON, JAMES"},
+                    {jersey: 0, name: "HERNANDEZ, JESSY"},
+                    {jersey: 9, name: "MAGSINO, ERICK"},
+                    {jersey: 3, name: "GARCIA, MATT"},
+                    {jersey: 12, name: "ADEL, IVAN"},
+                    {jersey: 2, name: "PAMATMAT, JULL"},
+                    {jersey: 7, name: "CASTILLO, CARLO"},
+                    {jersey: 30, name: "MANLULU, CARLOS"},
+                    {jersey: 29, name: "GUIBONE, LOREN"},
+                    {jersey: 27, name: "PANGILINAN, LESTERN"}
+                ]
+            },
+            "WAR": {
+                name: "TOTAL WAR", logo: "total war.jpg",
+                roster: [
+                    {jersey: 24, name: "LORENZO, LLOYD"},
+                    {jersey: 9, name: "RAYOS, CLYDE"},
+                    {jersey: 18, name: "BUENAVISTA, JOEL"},
+                    {jersey: 8, name: "REBUCA, BRIAN"},
+                    {jersey: 2, name: "DELA CRUZ, ROGER"},
+                    {jersey: 12, name: "FLANDEZ, GIE"},
+                    {jersey: 11, name: "GERVACIO, JORNEL"},
+                    {jersey: 28, name: "ARCANGELES, ERWIN"},
+                    {jersey: 3, name: "VILLAVICENCIO, RAFAELLE"},
+                    {jersey: 26, name: "GATTOC, HOMER"},
+                    {jersey: 1, name: "RUEDA, PETER"},
+                    {jersey: 22, name: "LOPEZ, FRANK"}
+                ]
+            },
+            "ARCOM": {
+                name: "ARCOM STEELE", logo: "arcom.jpg",
+                roster: [
+                    {jersey: 6, name: "PRESNILLO, SJAY"},
+                    {jersey: 10, name: "POLO, GIAN"},
+                    {jersey: 5, name: "COMMANDANTE, PATRICK"},
+                    {jersey: 8, name: "AMBAL, MARKUS"},
+                    {jersey: 26, name: "EVANGELISTA, CHA"},
+                    {jersey: 18, name: "CASTILLEJOS, YORAM"},
+                    {jersey: 9, name: "HERNANDEZ, JC"},
+                    {jersey: 33, name: "JADOC, JOHN"},
+                    {jersey: 30, name: "ASPI, LEX"},
+                    {jersey: 15, name: "POLO, RALPH"},
+                    {jersey: 1, name: "BUENO, BRON"},
+                    {jersey: 11, name: "RUSSELL, RENZ CAASI"}
+                ]
+            },
+            "TRUE": {
+                name: "TRUE BALLER", logo: "true.jpg",
+                roster: [
+                    {jersey: 11, name: "ZAMORA, RENZ"},
+                    {jersey: 12, name: "ROSALES, ALLAN"},
+                    {jersey: 24, name: "SALUGAO, RICHARD"},
+                    {jersey: 15, name: "RAMILO, NICSON"},
+                    {jersey: 6, name: "CALUAG, CHRISTIAN"},
+                    {jersey: 17, name: "PLACIDO, ZACHARY"},
+                    {jersey: 7, name: "FRANCISCO, RENZO"},
+                    {jersey: 8, name: "AVELLANEDA, MARCO"},
+                    {jersey: 55, name: "CUENZA, JHANREY"},
+                    {jersey: 20, name: "FERNANDEZ, JAYSI"},
+                    {jersey: 3, name: "REMOLIN, MARVIN"},
+                    {jersey: 4, name: "NATIVIDAD, CHRISTIANSON"}
+                ]
+            },
+            "HOB": {
+                name: "HOUSE OF BALLERS", logo: "HOB.jpg",
+                roster: [
+                    {jersey: 3, name: "UMIPIG, NICO"},
+                    {jersey: 9, name: "MANAOG, ELIJAH"},
+                    {jersey: 4, name: "PASA, MARX"},
+                    {jersey: 23, name: "TUPRIO, AKEEM"},
+                    {jersey: 14, name: "MANGONA, KESTER"},
+                    {jersey: 5, name: "CARIÑO, CLEMEN"},
+                    {jersey: 17, name: "CAÑABANO, ROBIN"},
+                    {jersey: 6, name: "TANAEL, LOUIE"},
+                    {jersey: 20, name: "DE CASTRO, KEVIN"},
+                    {jersey: 67, name: "TAGROS, CHASEL"},
+                    {jersey: 7, name: "ROCERO, RAP"},
+                    {jersey: 10, name: "LOO, ALVARO"},
+                    {jersey: 1, name: "VICENTE, EMMAN (RSV)"}
+                ]
+            },
+            "DRAGONS": {
+                name: "DRAGONS", logo: "dragons.jpg",
+                roster: [
+                    {jersey: 22, name: "COSTALES, ALEXIS"},
+                    {jersey: 32, name: "WONG, JOHNSON"},
+                    {jersey: 14, name: "LAQUINDANUM, MARLOU"},
+                    {jersey: 3, name: "PEREZ, ABIEL"},
+                    {jersey: 25, name: "DEPON, TOTO"},
+                    {jersey: 26, name: "LUGTU, TROA"},
+                    {jersey: 13, name: "GAURANO, RG"},
+                    {jersey: 42, name: "GUMAPAC, ALVITTO"},
+                    {jersey: 11, name: "SISON, HIRNAN"},
+                    {jersey: 18, name: "TONGOL, BON"},
+                    {jersey: 20, name: "MAURICIO, IAN"},
+                    {jersey: 2, name: "PAUSANOS, MARK"},
+                    {jersey: 25, name: "MALUPET, ABET GUMAPAC (RSV)"}
+                ]
+            },
+            "OTITS": {
+                name: "OTITS", logo: "otits.jpg",
+                roster: [
+                    {jersey: 16, name: "DADULA, CHOI"},
+                    {jersey: 25, name: "ACUÑA, HANNZ"},
+                    {jersey: 30, name: "SANTIAGO, MARLON"},
+                    {jersey: 18, name: "BERSAMINA, IAN"},
+                    {jersey: 1, name: "LACSAMANA, CECIL"},
+                    {jersey: 14, name: "BARBECHO JR., MELQUIADES"},
+                    {jersey: 23, name: "MALALUAN, GARY"},
+                    {jersey: 22, name: "BANDOJO, JEFFREY"},
+                    {jersey: 7, name: "ANTONIO, ALADDIN TITIYOKIMASH"},
+                    {jersey: 2, name: "AMARE, PAOLO SEMILLA"},
+                    {jersey: 89, name: "ORILLAZA, GHIO"},
+                    {jersey: 4, name: "VILLANUEVA, ARDIE"},
+                    {jersey: 13, name: "TRES, EMS SIBS (RSV)"}
+                ]
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            populateSelects();
+            renderSingleTeamViews();
+            renderMatchup();
+        });
+
+        function populateSelects() {
+            const homeSelect = document.getElementById("homeTeamSelect");
+            const awaySelect = document.getElementById("awayTeamSelect");
+            let keys = Object.keys(teamsData);
+
+            keys.forEach(key => {
+                homeSelect.innerHTML += `<option value="${key}">${teamsData[key].name}</option>`;
+                awaySelect.innerHTML += `<option value="${key}">${teamsData[key].name}</option>`;
+            });
+
+            homeSelect.value = keys[0];
+            awaySelect.value = keys[1];
+        }
+
+        function buildBoxScoreTableHTML(teamKey, prefix) {
+            const team = teamsData[teamKey];
+            let rowsHTML = "";
+
+            team.roster.forEach(player => {
+                rowsHTML += `<tr>
+                    <td><strong>${player.jersey}</strong></td>
+                    <td class="player-col">${player.name}</td>
+                    <td>0/0</td><td class="pct-cell">0%</td>
+                    <td>0/0</td><td class="pct-cell">0%</td>
+                    <td>0/0</td><td class="pct-cell">0%</td>
+                    <td>0/0</td><td class="pct-cell">0%</td>
+                    <td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
+                    <td class="pts-cell">0</td>
+                </tr>`;
+            });
+
+            return `
+                <div class="team-header-banner">
+                    <div class="team-info">
+                        <img src="${team.logo}" class="team-header-logo" onerror="this.src='https://via.placeholder.com/45'">
+                        <h2>${team.name}</h2>
+                    </div>
+                    <div class="team-score-badge" id="teamScore_${prefix}">0 PTS</div>
+                </div>
+                <div class="table-responsive">
+                    <table class="stat-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th class="player-col">PLAYER</th>
+                                <th>2PT (M/A)</th><th>2FG%</th>
+                                <th>3PT (M/A)</th><th>3FG%</th>
+                                <th>4PT (M/A)</th><th>4FG%</th>
+                                <th>FT (M/A)</th><th>FT%</th>
+                                <th>REB</th><th>AST</th><th>STL</th><th>BLK</th><th>TO</th><th>PF</th>
+                                <th>PTS</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rowsHTML}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderMatchup() {
+            const homeKey = document.getElementById("homeTeamSelect").value;
+            const awayKey = document.getElementById("awayTeamSelect").value;
+
+            document.getElementById("homeMatchupContainer").innerHTML = buildBoxScoreTableHTML(homeKey, "homeMatchup");
+            document.getElementById("awayMatchupContainer").innerHTML = buildBoxScoreTableHTML(awayKey, "awayMatchup");
+
+            document.getElementById("homePercentagesContainer").innerHTML = buildBoxScoreTableHTML(homeKey, "homePercentages");
+            document.getElementById("awayPercentagesContainer").innerHTML = buildBoxScoreTableHTML(awayKey, "awayPercentages");
+        }
+
+        function renderSingleTeamViews() {
+            const container = document.getElementById("single-team-views");
+            container.innerHTML = "";
+
+            Object.keys(teamsData).forEach(teamKey => {
+                const viewDiv = document.createElement("div");
+                viewDiv.id = `team-${teamKey}`;
+                viewDiv.className = "view-panel";
+                viewDiv.innerHTML = `<div class="team-card">${buildBoxScoreTableHTML(teamKey, `single_${teamKey}`)}</div>`;
+                container.appendChild(viewDiv);
+            });
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll(".view-panel").forEach(el => el.classList.remove("active"));
+            document.querySelectorAll(".nav-btn").forEach(el => el.classList.remove("active"));
+
+            document.getElementById(tabId).classList.add("active");
+            event.currentTarget.classList.add("active");
+
+            if (tabId === 'percentages-view') {
+                renderMatchup();
+            }
+        }
+
+        function exportCSV() {
+            let csv = [];
+            let activeView = document.querySelector(".view-panel.active");
+            let tables = activeView.querySelectorAll("table.stat-table");
+
+            tables.forEach(table => {
+                let rows = table.querySelectorAll("tr");
+                rows.forEach(row => {
+                    let cols = row.querySelectorAll("th, td");
+                    let rowData = [];
+                    cols.forEach(col => rowData.push(`"${col.textContent.trim()}"`));
+                    csv.push(rowData.join(","));
+                });
+                csv.push("");
+            });
+
+            let csvFile = new Blob([csv.join("\n")], { type: "text/csv" });
+            let downloadLink = document.createElement("a");
+            downloadLink.download = `Congre_Basketball_Fan_BoxScore_${new Date().toISOString().slice(0,10)}.csv`;
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.click();
+        }
+    </script>
+</body>
+</html>
